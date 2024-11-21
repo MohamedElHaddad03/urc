@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import { sendRoomMessage } from "./roomsMessageApi";
 
-import { uploadFileToVercelBlob } from "../utils/vercelBlob"; // Implement this function to handle Vercel Blob upload
 
 interface Params {
   id: string;
@@ -27,14 +26,12 @@ interface Params {
 
 const ChatRoom: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useHistory();
   const [session, setSession] = useState<Session>({} as Session);
   const [openError, setOpenError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [file, setFile] = useState<File | null>(null); // New state to hold the selected file
   const [notif, setNotif] = useState();
-  const inputFileRef = useRef<HTMLInputElement>(null);
   const [blob, setBlob] = useState<PutBlobResult | null>(null);
   const messages = useSelector((state: RootState) => state.roomMessages.data);
   const status = useSelector((state: RootState) => state.roomMessages.status);
@@ -61,37 +58,58 @@ const ChatRoom: React.FC = () => {
     }
   }, [dispatch, notif]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
-  
+      console.log("Selected file:", selectedFile);  
       if (selectedFile && selectedFile.type.startsWith('image/')) {
         setFile(selectedFile);
+        try {
+          const formData = new FormData();
+          formData.append("file", selectedFile);
+          
+          console.log("Form data:", formData);
+          
+          const response = await fetch(`/api/upload?filename=${selectedFile.name}`, {
+            method: 'POST',
+            body: selectedFile,
+          });
+  
+          console.log("Response status:", response.status);  
+          if (response.ok) {
+            const newBlob = await response.json();
+            console.log("Blob response:", newBlob);  
+            setBlob(newBlob);
+            setMessage(newBlob?.downloadUrl)
+          } else {
+            console.error("Failed to upload file:", response.statusText);
+            alert("Error uploading file. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          alert("Error uploading file. Please try again.");
+        }
       } else {
+        console.warn("Invalid file type selected:", selectedFile.type);  // Debug: Log invalid file type
         alert("Please select an image file (e.g., .jpg, .png, .gif).");
-        setFile(null); 
+        setFile(null);
       }
+    } else {
+      console.warn("No file selected");  
     }
   };
+  
   
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
 
-    let messageContent = message;
 
-    if (file) {
-      // Upload the file to Vercel Blob and get the URL
-      try {
-        const fileUrl = await uploadFileToVercelBlob(file);
-        messageContent = fileUrl; // Use the file URL as the message content
-      } catch (uploadError) {
-        setLoading(false);
-        setOpenError(true);
-        return;
-      }
-    }
+    let messageContent = "";
+     messageContent = message;
+
+
 
     sendRoomMessage(
       {
@@ -185,9 +203,14 @@ const ChatRoom: React.FC = () => {
               }}
             >
               {msg.content.startsWith("http") ? (
-                <a href={msg.content} target="_blank" rel="noopener noreferrer">
-                  View File
-                </a>
+                <img
+                src={msg.content}
+                alt="Uploaded file"
+                style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
+                onError={() => console.error('Image failed to load')}
+                  loading="lazy"
+              />
+              
               ) : (
                 <Typography variant="body1">{msg.content}</Typography>
               )}
@@ -231,7 +254,7 @@ const ChatRoom: React.FC = () => {
             onChange={(e) => setMessage(e.target.value)}
             sx={{ borderRadius: 50 }}
           />
-          <input
+         <input
             type="file"
             onChange={handleFileChange}
             style={{ display: "none" }}
@@ -247,13 +270,14 @@ const ChatRoom: React.FC = () => {
               Attach File
             </Button>
           </label>
+
           <Button
             type="submit"
             variant="contained"
             color="primary"
             sx={{ height: "100%", paddingX: "20px", borderRadius: 50 }}
-            disabled={loading || (!message.trim() && !file)}
-          >
+            disabled={loading || (!message.trim() )}
+            >
             {loading ? (
               <CircularProgress size={24} sx={{ color: "white" }} />
             ) : (

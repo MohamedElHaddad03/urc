@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {  useEffect, useRef, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useAppDispatch } from "../store/store";
 import { useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import { sendMessage } from "./messageApi";
 import { Session } from "../model/common";
 import { CustomError } from "../model/CustomError";
 import { format } from 'date-fns';
+
 import {
   TextField,
   Button,
@@ -16,20 +17,23 @@ import {
   Snackbar,
   CircularProgress,
 } from "@mui/material";
+import { PutBlobResult } from "@vercel/blob";
 
 interface Params {
   id: string;
 }
 
 const MessagesPage: React.FC = () => {
+  const [file, setFile] = useState<File | null>(null);
+
   const dispatch = useAppDispatch();
-  const navigate = useHistory();
   const [session, setSession] = useState<Session>({} as Session);
   const [openError, setOpenError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [notif, setNotif] = useState();
 
+  const [blob, setBlob] = useState<PutBlobResult | null>(null); // State for storing the response blob
   const messages = useSelector((state: RootState) => state.messages.data);
   const status = useSelector((state: RootState) => state.messages.status);
   const error = useSelector((state: RootState) => state.messages.error);
@@ -59,8 +63,49 @@ const MessagesPage: React.FC = () => {
     }
   }, [dispatch,notif]);
 
-
- 
+  
+  
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const selectedFile = e.target.files[0];
+      console.log("Selected file:", selectedFile);  
+      if (selectedFile && selectedFile.type.startsWith('image/')) {
+        setFile(selectedFile);
+        try {
+          const formData = new FormData();
+          formData.append("file", selectedFile);
+          
+          console.log("Form data:", formData);
+          
+          const response = await fetch(`/api/upload?filename=${selectedFile.name}`, {
+            method: 'POST',
+            body: selectedFile,
+          });
+  
+          console.log("Response status:", response.status);  
+          if (response.ok) {
+            const newBlob = await response.json();
+            console.log("Blob response:", newBlob);  
+            setBlob(newBlob);
+            setMessage(newBlob?.downloadUrl)
+          } else {
+            console.error("Failed to upload file:", response.statusText);
+            alert("Error uploading file. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error uploading file:", error);
+          alert("Error uploading file. Please try again.");
+        }
+      } else {
+        console.warn("Invalid file type selected:", selectedFile.type);  // Debug: Log invalid file type
+        alert("Please select an image file (e.g., .jpg, .png, .gif).");
+        setFile(null);
+      }
+    } else {
+      console.warn("No file selected");  
+    }
+  };
+  
   useEffect(() => {
     if (id) {
       setSelectedUser(sessionStorage.getItem("ContactUserName"));
@@ -68,33 +113,35 @@ const MessagesPage: React.FC = () => {
     }
   }, [id]);
   useEffect(() => {
-    console.log("")
+    console.log("hh")
   }, [IdUser]);
 
 
-  const handleSubmit = (
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      setLoading(true);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+
+    let messageContent = "";
+     messageContent = message;
   
-      sendMessage(
-        {
-          user_id1: sessionStorage.getItem("id") || "",
-          user_id2: id,
-          content: message,
-        },
-        (result: Session) => {
-          setSession(result);
-          setMessage("");
-          setLoading(false);
-        },
-        (sendingError: CustomError) => {
-          setLoading(false);
-          setOpenError(true);
-        }
-      );
-    }
-  );
+    sendMessage(
+      {
+        user_id1: sessionStorage.getItem("id") || "",
+        user_id2: id,
+        content: message,  // Here you send the URL as part of the message content
+      },
+      (result: Session) => {
+        setSession(result);
+        setMessage("");
+        setLoading(false);
+      },
+      (sendingError: CustomError) => {
+        setLoading(false);
+        setOpenError(true);
+      }
+    );
+  };
+  
   
 
   const sortedMessages = [
@@ -165,7 +212,18 @@ const MessagesPage: React.FC = () => {
                 wordWrap: 'break-word', // Ensures long words break properly
               }}
             >
-              <Typography variant="body1">{msg.content}</Typography>
+             {msg.content.startsWith("http") ? (
+                <img
+                src={msg.content}
+                alt="Uploaded file"
+                style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
+                onError={() => console.error('Image failed to load')}
+                  loading="lazy"
+              />
+              
+              ) : (
+                <Typography variant="body1">{msg.content}</Typography>
+              )}
               <Typography variant="caption" color="textSecondary" sx={{ textAlign: 'right' }}>
                 {msg.sent_at ? format(new Date(msg.sent_at), 'dd/MM HH:mm') : ''}
               </Typography>
@@ -202,12 +260,28 @@ const MessagesPage: React.FC = () => {
             onChange={(e) => setMessage(e.target.value)}
             sx={{ borderRadius: 50 }}
           />
+            <input
+            type="file"
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+            id="file-upload"
+          />
+          <label htmlFor="file-upload">
+            <Button
+              component="span"
+              variant="contained"
+              color="secondary"
+              sx={{ height: "100%", paddingX: "20px", borderRadius: 50 }}
+            >
+              Attach File
+            </Button>
+          </label>
           <Button
             type="submit"
             variant="contained"
             color="primary"
             sx={{ height: '100%', paddingX: '20px', borderRadius: 50 }}
-            disabled={loading || !message.trim()}
+            disabled={loading || (!message.trim())}
           >
             {loading ? (
               <CircularProgress size={24} sx={{ color: 'white' }} />
@@ -216,6 +290,7 @@ const MessagesPage: React.FC = () => {
             )}
           </Button>
         </Box>
+
 
         {/* Error Snackbar */}
         <Snackbar
