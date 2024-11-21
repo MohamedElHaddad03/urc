@@ -12,6 +12,13 @@ export interface User {
     external_id?: string;
 }
 
+export interface Message{
+    user_id1 : string;
+    user_id2 : string;
+    content : string;
+    sent_at : string;
+  }
+
 export interface Session {
     token: string;
     username?: string;
