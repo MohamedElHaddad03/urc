@@ -2,7 +2,8 @@ import { getConnecterUser } from "../lib/session.js";
 import { db ,sql } from "@vercel/postgres";
 import { checkSession, unauthorizedResponse } from "../lib/session.js";
 import PushNotifications from "@pusher/push-notifications-server";
-
+import dotenv from 'dotenv';  
+dotenv.config();
 export default async function handler(request, response) {
     console.log("Using push instance : " + process.env.PUSHER_INSTANCE_ID);
     const beamsClient = new PushNotifications({
