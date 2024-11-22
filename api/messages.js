@@ -1,6 +1,6 @@
-import { getConnecterUser } from "../lib/session";
-import { sql } from "@vercel/postgres";
-import { checkSession, unauthorizedResponse } from "../lib/session";
+import { getConnecterUser } from "../lib/session.js";
+import { db ,sql } from "@vercel/postgres";
+import { checkSession, unauthorizedResponse } from "../lib/session.js";
 import PushNotifications from "@pusher/push-notifications-server";
 
 export default async function handler(request, response) {
@@ -14,12 +14,14 @@ export default async function handler(request, response) {
     console.log("Request Body:", request.body);
     console.log('------------------------------------');
 
+    const client = await db.connect(); 
     const user = await getConnecterUser(request);
     console.log('------------------------------------');
     console.log("USER:", user);
     console.log('------------------------------------');
 
     try {
+        // Check session status
         const connected = await checkSession(request);
         if (!connected) {
             console.log("Not connected");
@@ -47,7 +49,7 @@ export default async function handler(request, response) {
                     return response.status(400).json({ error: "User IDs must be valid numbers" });
                 }
         
-                const { rows } = await sql`
+                const { rows } = await client.sql`
                     INSERT INTO message (user_id1, user_id2, content, sent_at) 
                     VALUES (${numUserId1}, ${numUserId2}, ${content}, now())
                     RETURNING user_id1, content`;
@@ -57,7 +59,7 @@ export default async function handler(request, response) {
                 console.log("New message:", newMessage);
                 console.log('------------------------------------');
         
-                const { rows: userRows } = await sql`
+                const { rows: userRows } = await client.sql`
                     SELECT * FROM users WHERE user_id = ${numUserId2} LIMIT 1
                 `;
         
@@ -128,6 +130,7 @@ export default async function handler(request, response) {
             });
         }
 
+        // If method is not allowed
         return response.status(405).json({ error: "Method Not Allowed" });
 
     } catch (error) {

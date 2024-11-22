@@ -25,18 +25,7 @@ function App() {
     };
   }, [username]);
 
-  const handleLogout = () => {
-    logOut(
-      () => {
-        console.log("Logged out successfully!");
-        window.location.href = "/";
-      },
-      (error) => {
-        console.error("Logout error:", error.message);
-        alert("There was an issue logging out. Please try again.");
-      }
-    );
-  };
+
 
   return (
     <>
@@ -50,8 +39,6 @@ function App() {
               return sessionStorage.getItem("username") ? (
                 <>
                   <h2>Welcome {sessionStorage.getItem("username")}</h2>
-                  <Link to="/signup">Go to Signup</Link>
-                  <button onClick={handleLogout}>LogOut</button>
                 </>
               ) : (
                 <Login />

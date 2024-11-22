@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';  
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { Room, RootState } from '../store/types';  
-import  room  from '../store/types';  
 import { fetchRooms } from '../store/roomsSlice';
 import { useAppDispatch } from '../store/store';
 import { Typography, List,  CircularProgress, Alert, Box } from '@mui/material';
@@ -12,7 +11,6 @@ import ListItem from '@mui/material/ListItem';
 const RoomsList: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useHistory();  
-  const [id,setId]=useState("");
 
   const rooms = useSelector((state: RootState) => state.rooms.data);
   const status = useSelector((state: RootState) => state.rooms.status);

@@ -3,7 +3,7 @@ import {loginUser} from "./loginApi";
 import {Session} from "../model/common";
 import {CustomError} from "../model/CustomError";
 import { TextField, Button, Typography, Box, Snackbar } from '@mui/material';
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Client, TokenProvider } from '@pusher/push-notifications-web';
 export function Login() {
 
@@ -130,7 +130,10 @@ document.head.appendChild(script);
           message={error.message}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         />
+        
       </Box>
+      <Link to="/signup">Go to Signup</Link>
+
       </>
     );
 }

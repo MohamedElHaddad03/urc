@@ -2,6 +2,7 @@
   "name": "urc",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@vercel/postgres": "^0.5.0",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
