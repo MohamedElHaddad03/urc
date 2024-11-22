@@ -18,7 +18,8 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { PutBlobResult } from "@vercel/blob";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 interface Params {
   id: string;
 }
@@ -276,8 +277,8 @@ const MessagesPage: React.FC = () => {
               color="secondary"
               sx={{ height: "100%", paddingX: "20px", borderRadius: 50 }}
             >
-              Attach File
-            </Button>
+<FontAwesomeIcon icon={faCamera} />
+</Button>
           </label>
           <Button
             type="submit"

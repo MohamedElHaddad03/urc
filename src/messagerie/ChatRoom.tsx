@@ -7,7 +7,6 @@ import { fetchRoomMessages } from "../store/messagesRoomsSlice";
 import { Session } from "../model/common";
 import { CustomError } from "../model/CustomError";
 import type { PutBlobResult } from '@vercel/blob';
-
 import { format } from "date-fns";
 import {
   TextField,
@@ -18,6 +17,8 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { sendRoomMessage } from "./roomsMessageApi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
 
 interface Params {
@@ -267,8 +268,8 @@ const ChatRoom: React.FC = () => {
               color="secondary"
               sx={{ height: "100%", paddingX: "20px", borderRadius: 50 }}
             >
-              Attach File
-            </Button>
+<FontAwesomeIcon icon={faCamera} />
+</Button>
           </label>
 
           <Button

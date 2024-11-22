@@ -49,7 +49,7 @@ const UsersList: React.FC = () => {
             variant="contained" 
             color="secondary" 
             onClick={handleLogout} 
-            sx={{ padding: '6px 16px', borderRadius: 2 }}
+            sx={{ marginLeft : '10px',padding: '6px 16px', borderRadius: 2 , right : 0}}
           >
             LogOut
           </Button>
