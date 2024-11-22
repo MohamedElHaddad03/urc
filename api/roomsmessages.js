@@ -1,5 +1,3 @@
-import { getConnecterRoom, triggerNotConnected } from "../lib/session";
-import { db } from "@vercel/postgres";
 import { sql } from "@vercel/postgres";
 import { checkSession, unauthorizedResponse } from "../lib/session";
 import PushNotifications from "@pusher/push-notifications-server";
@@ -15,7 +13,6 @@ export default async function handler(request, response) {
     console.log("Request Body:", request.body);
     console.log('------------------------------------');
 
-    const client = await db.connect(); 
 
 
     try {
@@ -47,7 +44,7 @@ export default async function handler(request, response) {
                     return response.status(400).json({ error: "Room IDs must be valid numbers" });
                 }
         
-                const { rows: insertedMessageRows } = await client.sql`
+                const { rows: insertedMessageRows } = await sql`
                 INSERT INTO roomsMessages (sender_id, room_id, content, sent_at) 
                 VALUES (${numUser}, ${numRoom}, ${content}, now())
                 RETURNING sender_id, room_id, content`;
@@ -57,7 +54,7 @@ export default async function handler(request, response) {
               console.log("New message:", newMessage);
               console.log('------------------------------------');
               
-              const { rows: userRows } = await client.sql`
+              const { rows: userRows } = await sql`
                 SELECT external_id FROM users;`;
               
               console.log('------------------------------------');

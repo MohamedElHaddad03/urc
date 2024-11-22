@@ -1,4 +1,4 @@
-import { getConnecterUser, triggerNotConnected } from "../lib/session";
+import { getConnecterUser } from "../lib/session";
 import { sql } from "@vercel/postgres";
 import { checkSession, unauthorizedResponse } from "../lib/session";
 import PushNotifications from "@pusher/push-notifications-server";
@@ -20,7 +20,6 @@ export default async function handler(request, response) {
     console.log('------------------------------------');
 
     try {
-        // Check session status
         const connected = await checkSession(request);
         if (!connected) {
             console.log("Not connected");
@@ -48,7 +47,7 @@ export default async function handler(request, response) {
                     return response.status(400).json({ error: "User IDs must be valid numbers" });
                 }
         
-                const { rows } = await client.sql`
+                const { rows } = await sql`
                     INSERT INTO message (user_id1, user_id2, content, sent_at) 
                     VALUES (${numUserId1}, ${numUserId2}, ${content}, now())
                     RETURNING user_id1, content`;
@@ -58,7 +57,7 @@ export default async function handler(request, response) {
                 console.log("New message:", newMessage);
                 console.log('------------------------------------');
         
-                const { rows: userRows } = await client.sql`
+                const { rows: userRows } = await sql`
                     SELECT * FROM users WHERE user_id = ${numUserId2} LIMIT 1
                 `;
         

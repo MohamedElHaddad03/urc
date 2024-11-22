@@ -1,6 +1,6 @@
 import { Session, SessionCallback, ErrorCallback } from "../model/common";
 import { CustomError } from "../model/CustomError";
-import { Message, MessageRoom } from "../store/types";
+import {  MessageRoom } from "../store/types";
 
 export function sendRoomMessage(message: MessageRoom, onResult: SessionCallback, onError: ErrorCallback) {
     console.log(JSON.stringify(message))
