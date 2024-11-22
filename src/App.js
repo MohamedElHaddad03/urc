@@ -1,17 +1,14 @@
 import { Link, Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import "./App.css";
-import { Login } from "./user/Login";
-import { Signup } from "./user/signup";
-import { logOut } from "./user/loginApi";
+import { Login } from "./user/Login.tsx";
+import { Signup } from "./user/signup.tsx";
+import { logOut } from "./user/loginApi.ts";
 import { useEffect, useState } from "react";
-import UsersList from "./messagerie/ListUsers";
-import { store } from "./store/store";
+import UsersList from "./messagerie/ListUsers.tsx";
+import { store } from "./store/store.ts";
 import { Provider } from "react-redux";
-import MessagesPage from "./messagerie/MessagePage";
-import MessageList from "./messagerie/messageList";
-import RoomsList from "./messagerie/ListRooms";
-import ChatRoom from "./messagerie/ChatRoom";
-import AvatarUploadPage from "./messagerie/upload";
+import MessageList from "./messagerie/messageList.tsx";
+
 
 function App() {
   const [username, setUsername] = useState(sessionStorage.getItem("username"));
@@ -74,7 +71,6 @@ function App() {
 
            <Route path="/signup" component={Signup} />
            <Route path="/login" component={Login} />
-           <Route path="/avatar" component={AvatarUploadPage} />
 
 
            

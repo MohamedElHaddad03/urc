@@ -1,6 +1,5 @@
 import { getConnecterUser, triggerNotConnected } from "../lib/session";
-import { db } from "@vercel/postgres";
-import { sql } from "@vercel/postgres";
+import { db ,sql } from "@vercel/postgres";
 import { checkSession, unauthorizedResponse } from "../lib/session";
 import PushNotifications from "@pusher/push-notifications-server";
 
@@ -131,7 +130,6 @@ export default async function handler(request, response) {
             });
         }
 
-        // If method is not allowed
         return response.status(405).json({ error: "Method Not Allowed" });
 
     } catch (error) {

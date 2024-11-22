@@ -1,6 +1,6 @@
 import {getConnecterUser, triggerNotConnected} from "../lib/session";
 
-const PushNotifications = require("@pusher/push-notifications-server");
+import  PushNotifications from "@pusher/push-notifications-server";
 
 
 export default async (req, res) => {
