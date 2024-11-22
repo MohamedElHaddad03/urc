@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {  useParams } from "react-router-dom";
 import { useAppDispatch } from "../store/store";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/types";
@@ -30,11 +30,11 @@ const ChatRoom: React.FC = () => {
   const [openError, setOpenError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [file, setFile] = useState<File | null>(null); // New state to hold the selected file
+  const [file, setFile] = useState<File | null>(null); 
   const [notif, setNotif] = useState();
   const [blob, setBlob] = useState<PutBlobResult | null>(null);
   const messages = useSelector((state: RootState) => state.roomMessages.data);
-  const status = useSelector((state: RootState) => state.roomMessages.status);
+  //const status = useSelector((state: RootState) => state.roomMessages.status);
   const error = useSelector((state: RootState) => state.roomMessages.error);
   const { id } = useParams<Params>();
 

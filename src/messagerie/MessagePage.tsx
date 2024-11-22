@@ -33,9 +33,9 @@ const MessagesPage: React.FC = () => {
   const [message, setMessage] = useState("");
   const [notif, setNotif] = useState();
 
-  const [blob, setBlob] = useState<PutBlobResult | null>(null); // State for storing the response blob
+  const [blob, setBlob] = useState<PutBlobResult | null>(null);
   const messages = useSelector((state: RootState) => state.messages.data);
-  const status = useSelector((state: RootState) => state.messages.status);
+ // const status = useSelector((state: RootState) => state.messages.status);
   const error = useSelector((state: RootState) => state.messages.error);
   const { id } = useParams<Params>();
   const [IdUser,setIdUser] =useState(sessionStorage.getItem("ContactUserId"))
@@ -100,6 +100,9 @@ const MessagesPage: React.FC = () => {
         console.warn("Invalid file type selected:", selectedFile.type);  // Debug: Log invalid file type
         alert("Please select an image file (e.g., .jpg, .png, .gif).");
         setFile(null);
+        console.log(file)
+
+
       }
     } else {
       console.warn("No file selected");  
