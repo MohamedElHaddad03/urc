@@ -9,6 +9,10 @@ export default async function handler(request, response) {
         instanceId: process.env.PUSHER_INSTANCE_ID,
         secretKey: process.env.PUSHER_SECRET_KEY,
     });
+
+    console.log('------------------------------------');
+    console.log(beamsClient);
+    console.log('------------------------------------');
     
     console.log('------------------------------------');
     console.log("Request Body:", request.body);
