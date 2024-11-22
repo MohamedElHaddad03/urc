@@ -11,19 +11,10 @@ export default async function handler(request, response) {
         secretKey: process.env.PUSHER_SECRET_KEY,
     });
 
-    console.log('------------------------------------');
-    console.log(beamsClient);
-    console.log('------------------------------------');
     
-    console.log('------------------------------------');
-    console.log("Request Body:", request.body);
-    console.log('------------------------------------');
-
     const client = await db.connect(); 
     const user = await getConnecterUser(request);
-    console.log('------------------------------------');
-    console.log("USER:", user);
-    console.log('------------------------------------');
+
 
     try {
         // Check session status
@@ -39,9 +30,7 @@ export default async function handler(request, response) {
                 const message = await request.body;
                 const { user_id1, user_id2, content } = message;
         
-                console.log('------------------------------------');
-                console.log("Received message:", message);
-                console.log('------------------------------------');
+
         
                 if (!user_id1 || !user_id2 || !content) {
                     return response.status(400).json({ error: "Missing required fields" });
@@ -60,9 +49,7 @@ export default async function handler(request, response) {
                     RETURNING user_id1, content`;
                 
                 const newMessage = rows[0];
-                console.log('------------------------------------');
-                console.log("New message:", newMessage);
-                console.log('------------------------------------');
+
         
                 const { rows: userRows } = await client.sql`
                     SELECT * FROM users WHERE user_id = ${numUserId2} LIMIT 1
@@ -73,9 +60,7 @@ export default async function handler(request, response) {
                 }
         
                 const user = userRows[0];
-                console.log('------------------------------------');
-                console.log("External ID of recipient:", user);
-                console.log('------------------------------------');
+
         
                 try {
                     const publishResponse = await beamsClient.publishToUsers([user.external_id], {
@@ -110,9 +95,7 @@ export default async function handler(request, response) {
                 return response.status(400).json({ error: "User ID is required" });
             }
 
-            console.log('------------------------------------');
-            console.log("User ID:", user.id);
-            console.log('------------------------------------');
+
 
             const { rows: sentMessages } = await sql`
                 SELECT * FROM message 
@@ -124,10 +107,7 @@ export default async function handler(request, response) {
                 WHERE user_id1 = ${id} AND user_id2 = ${user.id};
             `;
 
-            console.log('------------------------------------');
-            console.log("Sent Messages:", sentMessages);
-            console.log("Received Messages:", receivedMessages);
-            console.log('------------------------------------');
+
 
             return response.status(200).json({
                 sentMessages,
@@ -135,7 +115,6 @@ export default async function handler(request, response) {
             });
         }
 
-        // If method is not allowed
         return response.status(405).json({ error: "Method Not Allowed" });
 
     } catch (error) {
