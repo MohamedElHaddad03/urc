@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import MessagesPage from './MessagePage';
 import UsersList from './ListUsers';

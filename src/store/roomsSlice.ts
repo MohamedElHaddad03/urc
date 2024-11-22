@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import User, { Room } from './types'; 
+import  { Room } from './types'; 
 
 export const fetchRooms = createAsyncThunk(
   'rooms/fetchRooms', 

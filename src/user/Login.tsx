@@ -5,7 +5,6 @@ import {CustomError} from "../model/CustomError";
 import { TextField, Button, Typography, Box, Snackbar } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import { Client, TokenProvider } from '@pusher/push-notifications-web';
-import PushNotifications from "@pusher/push-notifications-server";
 export function Login() {
 
   const script = document.createElement('script');
