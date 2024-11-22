@@ -1,5 +1,5 @@
 import { getConnecterUser, triggerNotConnected } from "../lib/session";
-import { db ,sql } from "@vercel/postgres";
+import { sql } from "@vercel/postgres";
 import { checkSession, unauthorizedResponse } from "../lib/session";
 import PushNotifications from "@pusher/push-notifications-server";
 
@@ -14,7 +14,6 @@ export default async function handler(request, response) {
     console.log("Request Body:", request.body);
     console.log('------------------------------------');
 
-    const client = await db.connect(); 
     const user = await getConnecterUser(request);
     console.log('------------------------------------');
     console.log("USER:", user);
