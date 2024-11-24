@@ -29,6 +29,8 @@ const UsersList: React.FC = () => {
     navigate.push(`/conversation/user/${user.user_id}`);  // use .push() with useHistory()
     sessionStorage.setItem("ContactUserName", user.username);
     sessionStorage.setItem("ContactUserId", user.user_id);
+    window.location.reload();
+
   };
 
   const handleLogout = () => {
@@ -84,8 +86,13 @@ const UsersList: React.FC = () => {
                   }}
                 >
                   <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {user.username} - Dernière connexion: {user.last_login}
-                  </Typography>
+  {user.username}
+</Typography>
+
+<Typography variant="body1" sx={{ fontWeight: 300, color: 'grey', marginTop: 5 }}>
+  Dernière connexion: {user.last_login}
+</Typography>
+
                 </ListItem>
               ))
           ) : (

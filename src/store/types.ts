@@ -29,7 +29,7 @@ export default interface User {
     room_id : string;
     name : string;
     created_by : string;
-    created_at? : string;
+    created_on? : string;
   }
   export interface RoomsState {
     data: Room[];

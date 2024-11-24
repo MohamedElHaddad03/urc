@@ -10,9 +10,7 @@ export default async function handler(request, response) {
         secretKey: process.env.PUSHER_SECRET_KEY,
     });
     
-    console.log('------------------------------------');
-    console.log("Request Body:", request.body);
-    console.log('------------------------------------');
+
 
     const client = await db.connect(); 
 
@@ -31,9 +29,7 @@ export default async function handler(request, response) {
                 const message = await request.body;
                 const { sender_id, room_id, content } = message;
         
-                console.log('------------------------------------');
-                console.log("Received message:", message);
-                console.log('------------------------------------');
+
         
                 if (!sender_id || !room_id || !content) {
                     return response.status(400).json({ error: "Missing required fields" });
@@ -59,16 +55,12 @@ export default async function handler(request, response) {
               const { rows: userRows } = await client.sql`
                 SELECT external_id FROM users;`;
               
-              console.log('------------------------------------');
-              console.log("All user external_ids:", userRows);  
-              console.log('------------------------------------');
+
               const { rows: roomRows } = await client.sql`
                 SELECT * FROM rooms where room_id = ${room_id};`;
               const room = roomRows[0];
 
-              console.log('------------------------------------');
-              console.log("Current Room:", room);  
-              console.log('------------------------------------');
+
               
 
         
@@ -105,9 +97,6 @@ export default async function handler(request, response) {
                 return response.status(400).json({ error: "Room ID is required" });
             }
 
-            console.log('------------------------------------');
-            console.log("Room ID:", id);
-            console.log('------------------------------------');
 
             const { rows: roomMessages } = await sql`
                 SELECT sender_id,room_id,content,sent_at FROM roomsMessages 
