@@ -2,9 +2,9 @@
 
 // This function registers the service worker
 export function register() {
-    if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
-      const swUrl = `./service-worker.js`;
-  
+    if ('serviceWorker' in navigator) {
+      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;  
+      
       window.addEventListener('load', () => {
         navigator.serviceWorker
           .register(swUrl)
