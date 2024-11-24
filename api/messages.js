@@ -17,7 +17,6 @@ export default async function handler(request, response) {
 
 
     try {
-        // Check session status
         const connected = await checkSession(request);
         if (!connected) {
             console.log("Not connected");
