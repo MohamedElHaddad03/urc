@@ -57,7 +57,6 @@ const MessagesPage: React.FC = () => {
     }
   }, []);
 
-  // Fetch messages when the component mounts
   useEffect(() => {
     const userId = sessionStorage.getItem("ContactUserId");
     if (userId) {
@@ -101,7 +100,6 @@ const MessagesPage: React.FC = () => {
     }
   };
 
-  // Set selected user on mount or when `id` changes
   useEffect(() => {
     if (id) {
       setSelectedUser(sessionStorage.getItem("ContactUserName"));
@@ -118,11 +116,11 @@ const MessagesPage: React.FC = () => {
       {
         user_id1: sessionStorage.getItem("id") || "",
         user_id2: id,
-        content: message,  // URL or plain message
+        content: message,  
       },
       (result: Session) => {
         setSession(result);
-        setMessage("");  // Clear message field after successful send
+        setMessage(""); 
         setLoading(false);
       },
       (sendingError: CustomError) => {

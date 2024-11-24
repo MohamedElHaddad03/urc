@@ -58,7 +58,6 @@ const ChatRoom: React.FC = () => {
     }
   }, [dispatch, notif, id]);
 
-  // Handle file upload
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFile = e.target.files[0];
@@ -80,7 +79,7 @@ const ChatRoom: React.FC = () => {
             const newBlob = await response.json();
             console.log("Blob response:", newBlob);
             setBlob(newBlob);
-            setMessage(newBlob?.downloadUrl);  // Attach URL of uploaded image
+            setMessage(newBlob?.downloadUrl);  
           } else {
             alert("Error uploading file. Please try again.");
           }
@@ -110,8 +109,8 @@ const ChatRoom: React.FC = () => {
       },
       (result: Session) => {
         setSession(result);
-        setMessage("");  // Clear message field
-        setFile(null);    // Reset file after sending
+        setMessage("");  
+        setFile(null);    
         setLoading(false);
       },
       (sendingError: CustomError) => {
@@ -121,7 +120,6 @@ const ChatRoom: React.FC = () => {
     );
   };
 
-  // Sorting messages by sent time
   const sortedMessages = [
     ...(messages || []),
   ].sort((a, b) => {
